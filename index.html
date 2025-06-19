@@ -101,6 +101,12 @@
     const lastUserMessage = document.getElementById("last-user-message");
     const botResponse = document.getElementById("bot-response");
 
+    function generateSessionId() {
+      return 'sess-' + Math.random().toString(36).substring(2, 12);
+    }
+
+    const sessionId = generateSessionId();
+
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const message = input.value.trim();
@@ -117,14 +123,21 @@
           },
           body: JSON.stringify({
             user: "rubens@lille.com.br",
-            message: message
+            message: message,
+            sessionId: sessionId
           })
         });
 
         const data = await res.json();
-        botResponse.innerHTML = data?.resposta?.html || "❌ Resposta não recebida corretamente.";
+        if (data?.resposta?.html) {
+          botResponse.innerHTML = data.resposta.html;
+        } else {
+          botResponse.innerHTML = "❌ Resposta inválida ou campo `resposta.html` não encontrado.";
+          console.log("Resposta recebida:", data);
+        }
       } catch (err) {
         botResponse.innerHTML = "❌ Erro ao comunicar com o servidor.";
+        console.error(err);
       }
 
       input.value = "";
