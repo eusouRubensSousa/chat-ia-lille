@@ -131,8 +131,9 @@
         const text = await res.text();
         try {
           const data = JSON.parse(text);
-          if (data?.resposta?.html) {
-            botResponse.innerHTML = data.resposta.html;
+          const html = data?.resposta?.html || data?.response?.body?.resposta?.html;
+          if (html) {
+            botResponse.innerHTML = html;
           } else {
             botResponse.innerHTML = "❌ Resposta inválida ou campo `resposta.html` não encontrado.";
             console.log("Resposta recebida:", data);
