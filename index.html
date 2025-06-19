@@ -128,13 +128,20 @@
           })
         });
 
-        const data = await res.json();
-        if (data?.resposta?.html) {
-          botResponse.innerHTML = data.resposta.html;
-        } else {
-          botResponse.innerHTML = "❌ Resposta inválida ou campo `resposta.html` não encontrado.";
-          console.log("Resposta recebida:", data);
+        const text = await res.text();
+        try {
+          const data = JSON.parse(text);
+          if (data?.resposta?.html) {
+            botResponse.innerHTML = data.resposta.html;
+          } else {
+            botResponse.innerHTML = "❌ Resposta inválida ou campo `resposta.html` não encontrado.";
+            console.log("Resposta recebida:", data);
+          }
+        } catch (err) {
+          botResponse.innerHTML = "❌ Erro ao processar a resposta.";
+          console.error("Erro ao dar parse na resposta:", text);
         }
+
       } catch (err) {
         botResponse.innerHTML = "❌ Erro ao comunicar com o servidor.";
         console.error(err);
